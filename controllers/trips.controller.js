@@ -6,9 +6,7 @@ exports.createTripProcess = async (req, res, next) => {
     const userId = req.user.id;
     const trip = { ...req.body };
     trip.userId = userId;
-    // Create trip
     const newTrip = await Trips.create(trip);
-    // Send response
     res.status(200).json({ newTrip });
   } catch (error) {
     res.status(400).json({ errorMessage: error });

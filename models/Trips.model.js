@@ -10,7 +10,6 @@ const tripsSchema = new Schema(
     },
     description: {
       type: String,
-      required: [true, "Description is required"],
       minlength: [2, "Description must be at least 2 characters"],
       maxlength: [20, "Description must be at most 20 characters"],
     },

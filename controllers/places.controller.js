@@ -6,7 +6,7 @@ exports.createPlaceProcess = async (req, res, next) => {
     const userId = req.user.id;
     const place = { ...req.body };
     place.userId = userId;
-    const newPlace = await Places.create(place);
+    const newPlace = await Places.create({ place });
     res.status(200).json({ newPlace });
   } catch (error) {
     res.status(400).json({ errorMessage: error });
@@ -28,8 +28,8 @@ exports.allPlacesProcess = async (req, res, next) => {
 exports.onePlaceProcess = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const { id: userId } = req.user;
-    const place = await Places.findOne({ _id: id, user: userId });
+    const userId = req.user.id;
+    const place = await Places.findOne({ _id: id, userId });
     res.status(200).json({ place });
   } catch (error) {
     res.status(400).json({ errorMessage: error });

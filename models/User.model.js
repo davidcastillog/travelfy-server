@@ -5,7 +5,6 @@ const userSchema = new Schema(
     username: {
       type: String,
       unique: true,
-      // Defaul random string
       default: () => Math.random().toString(36).substring(2, 10),
     },
     email: {

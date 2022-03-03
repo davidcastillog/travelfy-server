@@ -5,17 +5,18 @@ const {
   oneTripProcess,
   deleteTripProcess,
 } = require("../controllers/trips.controller");
+const { verifyToken } = require("../middleware/jwt.middleware");
 
 // Create one trip
-router.post("/create", createTripProcess);
+router.post("/create", verifyToken, createTripProcess);
 
 // List all trips
-router.get("/", allTripsProcess);
+router.get("/", verifyToken, allTripsProcess);
 
 // Get one trip
-router.get("/:id",oneTripProcess);
+router.get("/:id", verifyToken, oneTripProcess);
 
 // Delete one trip
-router.delete("/delete/:id", deleteTripProcess );
+router.delete("/delete/:id", verifyToken, deleteTripProcess);
 
 module.exports = router;
