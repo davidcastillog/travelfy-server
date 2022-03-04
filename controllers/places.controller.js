@@ -79,6 +79,14 @@ exports.deletePlaceProcess = async (req, res, next) => {
     const { _id: _user } = req.user;
     const { id } = req.params;
     const place = await Places.findOneAndDelete({ _id: id, _user });
+    const user = await User.findByIdAndUpdate(_user, {
+      $pull: { _places: id },
+    });
+    user.save();
+    const trip = await Trips.findByIdAndUpdate(place._trip, {
+      $pull: { _places: id },
+    });
+    trip.save();
     if (place) {
       res.status(200).json({ placeDeleted: place });
     } else {

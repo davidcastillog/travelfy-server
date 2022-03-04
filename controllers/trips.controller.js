@@ -1,13 +1,16 @@
 const Trips = require("../models/Trips.model");
 const User = require("../models/User.model");
+const Places = require("../models/Places.model");
 
 // Create one trip
 exports.createTripProcess = async (req, res, next) => {
   try {
-    const { _id: _user} = req.user;
-    const trip = {...req.body}
-    const newTrip = await Trips.create({...trip, _user});
-    const user = await User.findByIdAndUpdate(_user, {$push: {_trips: newTrip._id}});
+    const { _id: _user } = req.user;
+    const trip = { ...req.body };
+    const newTrip = await Trips.create({ ...trip, _user });
+    const user = await User.findByIdAndUpdate(_user, {
+      $push: { _trips: newTrip._id },
+    });
     user.save();
     res.status(200).json({ trip: newTrip });
   } catch (error) {
@@ -18,10 +21,10 @@ exports.createTripProcess = async (req, res, next) => {
 // Get all trips from the user logged in
 exports.allTripsProcess = async (req, res, next) => {
   try {
-    const { _id: _user} = req.user;
-    const trips = await Trips.find({_user});
+    const { _id: _user } = req.user;
+    const trips = await Trips.find({ _user });
     if (trips) {
-    res.status(200).json({ trips });
+      res.status(200).json({ trips });
     } else {
       res.status(404).json({ errorMessage: "No trips found" });
     }
@@ -33,9 +36,9 @@ exports.allTripsProcess = async (req, res, next) => {
 // Get one trip from the user logged in
 exports.oneTripProcess = async (req, res, next) => {
   try {
-    const { _id: _user} = req.user;
+    const { _id: _user } = req.user;
     const { id } = req.params;
-    const trip = await Trips.findOne({_id: id, _user});
+    const trip = await Trips.findOne({ _id: id, _user });
     if (trip) {
       res.status(200).json({ trip });
     } else {
@@ -49,9 +52,9 @@ exports.oneTripProcess = async (req, res, next) => {
 // Update one trip from the user logged in
 exports.updateTripProcess = async (req, res, next) => {
   try {
-    const { _id: _user} = req.user;
+    const { _id: _user } = req.user;
     const { id } = req.params;
-    const trip = await Trips.findOneAndUpdate({_id: id, _user}, req.body);
+    const trip = await Trips.findOneAndUpdate({ _id: id, _user }, req.body);
     if (trip) {
       res.status(200).json({ trip });
     } else {
@@ -65,9 +68,19 @@ exports.updateTripProcess = async (req, res, next) => {
 // Delete one trip from the user logged in
 exports.deleteTripProcess = async (req, res, next) => {
   try {
-    const { _id: _user} = req.user;
+    const { _id: _user } = req.user;
     const { id } = req.params;
-    const trip = await Trips.findOneAndDelete({_id: id, _user});
+    const trip = await Trips.findOneAndDelete({ _id: id, _user });
+    const user = await User.findByIdAndUpdate(_user, { $pull: { _trips: id } });
+    user.save();
+    const places = await Places.find({ _trip: id });
+    if (places) {
+      places.forEach(async (place) => {
+        await Places.findByIdAndDelete(place._id);
+      });
+    } else {
+      res.status(404).json({errorMessage: "Places not found" })
+    }
     if (trip) {
       res.status(200).json({ tripDeleted: trip });
     } else {
