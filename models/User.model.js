@@ -5,7 +5,9 @@ const userSchema = new Schema(
     username: {
       type: String,
       unique: true,
-      default: () => Math.random().toString(36).substring(2, 10),
+      minlength: [4, "Username must be at least 4 characters long"],
+      maxlength: [20, "Username must be at most 20 characters long"],
+      default: () => Math.random().toString(36).substring(4, 10),
     },
     email: {
       type: String,
@@ -22,15 +24,7 @@ const userSchema = new Schema(
     password: {
       type: String,
       required: [true, "Password is required"],
-      minlength: [6, "Password must be at least 8 characters long"],
-      maxlength: [32, "Password must be at most 32 characters long"],
-      validate: {
-        validator: function (password) {
-          return /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[$@$!%*?&])[A-Za-z\d$@$!%*?&]{6,32}/.test(
-            password
-          );
-        },
-      },
+      minlength: [6, "Password must be at least 6 characters long"]
     },
     firstName: {
       type: String,

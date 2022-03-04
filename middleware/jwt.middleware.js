@@ -1,4 +1,3 @@
-
 const jwt = require("jsonwebtoken");
 const User = require("../models/User.model");
 
@@ -7,11 +6,11 @@ const User = require("../models/User.model");
 exports.verifyToken = (req, res, next) => {
   const { headload, signature } = req.cookies;
   if (!headload || !signature)
-    return res.status(401).json({ errorMessage: "Unauthorized" });
+    return res.status(401).json({ errorMessage: "No token found" });
 
   jwt.verify(`${headload}.${signature}`, process.env.SECRET, (err, decoded) => {
     if (err) {
-      return res.status(401).json({ errorMessage: "Unauthorized" });
+      return res.status(401).json({ errorMessage: "Error on token" });
     }
     User.findById(decoded.userId)
       .then((user) => {
@@ -19,7 +18,7 @@ exports.verifyToken = (req, res, next) => {
         next();
       })
       .catch((error) => {
-        res.status(401).json({ errorMessage: "Peluquín  ", error });
+        res.status(401).json({ errorMessage: error });
       });
   });
 };

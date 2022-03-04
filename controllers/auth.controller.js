@@ -2,7 +2,7 @@ const User = require("../models/User.model");
 const bcrypt = require("bcrypt");
 const mongoose = require("mongoose");
 const saltRounds = 10;
-const { createJWT, clearRes } = require("../middleware/jwt.middleware");
+const { createJWT, clearRes } = require("../utils/jwt");
 
 exports.signupProcess = (req, res, next) => {
   const { email, password, confirmPassword, ...rest } = req.body;
@@ -10,26 +10,26 @@ exports.signupProcess = (req, res, next) => {
   if (!email) {
     return res
       .status(400)
-      .json({ errorMessage: "Oye por favor manda un correo" });
+      .json({ errorMessage: "Email is required" });
   }
 
-  if (password.length < 8) {
+  if (password.length < 6 || password.length > 32) {
     return res.status(400).json({
-      errorMessage: "Oye tu contraseña debe tener mas de 8 caracteres!!! >:|",
+      errorMessage: "Password must be at least 6 characters long",
     });
   }
 
   if (password != confirmPassword) {
     return res
       .status(400)
-      .json({ errorMessage: "Oye tus contraseñas no coinciden " });
+      .json({ errorMessage: "Your passwords doesn't match" });
   }
 
   User.findOne({ email }).then((found) => {
     if (found) {
       return res
         .status(400)
-        .json({ errorMessage: "Oye tu corre ya esta en uso" });
+        .json({ errorMessage: "Your email is already in use" });
     }
 
     return bcrypt
@@ -62,7 +62,6 @@ exports.signupProcess = (req, res, next) => {
         res.status(201).json({ user: newUser });
       })
       .catch((error) => {
-        console.log(error);
         if (error instanceof mongoose.Error.ValidationError) {
           return res.status(400).json({ errorMessage: error.message });
         }
@@ -84,7 +83,7 @@ exports.loginProcess = async (req, res, next) => {
     if (!user) {
       return res
         .status(400)
-        .json({ errorMessage: "Oye tus credenciales son erroneas " });
+        .json({ errorMessage: "Your credentials are wrong" });
     }
     const match = await bcrypt.compareSync(password, user.password);
     if (match) {
@@ -107,7 +106,7 @@ exports.loginProcess = async (req, res, next) => {
     } else {
       res
         .status(400)
-        .json({ errorMessage: "Oye tus credenciales son erroneas " });
+        .json({ errorMessage: "Your credentials are wrong" });
     }
   } catch (error) {
     if (error instanceof mongoose.Error.ValidationError) {
@@ -115,18 +114,23 @@ exports.loginProcess = async (req, res, next) => {
     }
     if (error.code === 11000) {
       return res.status(400).json({
-        errorMessage: "mensaje de error",
+        errorMessage: "Username need to be unique. The username you chose is already in use.",
       });
     }
     return res.status(500).json({ errorMessage: error.message });
   }
 };
 
-exports.logoutProcess = (req, res, next) => {
-  res.clearCookie("headload");
-  res.clearCookie("signature");
-  res.status(200).json({ result: "Saliste todo chido!!!!!! regresa pronto!" });
+exports.logoutProcess = async (req, res, next) => {
+    try {
+        res.clearCookie("headload");
+        res.clearCookie("signature");
+        res.status(200).json({ message: "You have been logged out" });
+    } catch (error) {
+        return res.status(500).json({ errorMessage: error.message });
+    }
 };
+
 
 exports.getUserLogged = async (req, res, next) => {
   try {
