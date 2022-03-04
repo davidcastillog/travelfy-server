@@ -16,6 +16,9 @@ router.get("/", verifyToken, allTripsProcess);
 // Get one trip
 router.get("/:id", verifyToken, oneTripProcess);
 
+// Update one trip
+router.patch("/update/:id", verifyToken, oneTripProcess);
+
 // Delete one trip
 router.delete("/delete/:id", verifyToken, deleteTripProcess);
 

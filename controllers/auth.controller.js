@@ -43,7 +43,7 @@ exports.signupProcess = async (req, res, next) => {
     const [header, payload, signature] = createJWT(user);
 
     res.cookie("headload", `${header}.${payload}`, {
-      maxAge: 1000 * 60 * 30,
+      maxAge: 1000 * 60 * 60 * 24,
       httpOnly: true,
       sameSite: true,
       secure: false,
@@ -87,7 +87,7 @@ exports.loginProcess = async (req, res, next) => {
       const [header, payload, signature] = createJWT(user);
 
       res.cookie("headload", `${header}.${payload}`, {
-        maxAge: 1000 * 60 * 30,
+        maxAge: 1000 * 60 * 60 * 24,
         httpOnly: true,
         sameSite: true,
         secure: false,

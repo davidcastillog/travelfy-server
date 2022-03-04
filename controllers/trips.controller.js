@@ -46,6 +46,22 @@ exports.oneTripProcess = async (req, res, next) => {
   }
 };
 
+// Update one trip from the user logged in
+exports.updateTripProcess = async (req, res, next) => {
+  try {
+    const { _id: _user} = req.user;
+    const { id } = req.params;
+    const trip = await Trips.findOneAndUpdate({_id: id, _user}, req.body);
+    if (trip) {
+      res.status(200).json({ trip });
+    } else {
+      res.status(404).json({ errorMessage: "Trip not found" });
+    }
+  } catch (error) {
+    res.status(400).json({ errorMessage: error });
+  }
+};
+
 // Delete one trip from the user logged in
 exports.deleteTripProcess = async (req, res, next) => {
   try {
@@ -53,7 +69,7 @@ exports.deleteTripProcess = async (req, res, next) => {
     const { id } = req.params;
     const trip = await Trips.findOneAndDelete({_id: id, _user});
     if (trip) {
-      res.status(200).json({ trip });
+      res.status(200).json({ tripDeleted: trip });
     } else {
       res.status(404).json({ errorMessage: "Trip not found" });
     }
