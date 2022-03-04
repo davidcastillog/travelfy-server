@@ -4,16 +4,16 @@ const mongoose = require("mongoose");
 const saltRounds = 10;
 const { createJWT, clearRes } = require("../utils/jwt");
 
-exports.signupProcess = (req, res, next) => {
+// Signup process
+
+exports.signupProcess = async (req, res, next) => {
   const { email, password, confirmPassword, ...rest } = req.body;
 
   if (!email) {
-    return res
-      .status(400)
-      .json({ errorMessage: "Email is required" });
+    return res.status(400).json({ errorMessage: "Email is required" });
   }
 
-  if (password.length < 6 || password.length > 32) {
+  if (password.length < 6) {
     return res.status(400).json({
       errorMessage: "Password must be at least 6 characters long",
     });
@@ -25,56 +25,53 @@ exports.signupProcess = (req, res, next) => {
       .json({ errorMessage: "Your passwords doesn't match" });
   }
 
-  User.findOne({ email }).then((found) => {
+  try {
+    const found = await User.findOne({ email });
     if (found) {
       return res
         .status(400)
         .json({ errorMessage: "Your email is already in use" });
     }
 
-    return bcrypt
-      .genSalt(saltRounds)
-      .then((salt) => bcrypt.hash(password, salt))
-      .then((hashedPassword) => {
-        return User.create({
-          email,
-          password: hashedPassword,
-        });
-      })
-      .then((user) => {
+    const hashedPassword = await bcrypt.hash(password, saltRounds);
 
-        const [header, payload, signature] = createJWT(user);
+    const user = await User.create({
+      email,
+      password: hashedPassword,
+    });
 
-        res.cookie("headload", `${header}.${payload}`, {
-          maxAge: 1000 * 60 * 30,
-          httpOnly: true,
-          sameSite: true,
-          secure: false,
-        });
+    const [header, payload, signature] = createJWT(user);
 
-        res.cookie("signature", signature, {
-          httpOnly: true,
-          sameSite: true,
-          secure: false,
-        });
+    res.cookie("headload", `${header}.${payload}`, {
+      maxAge: 1000 * 60 * 30,
+      httpOnly: true,
+      sameSite: true,
+      secure: false,
+    });
 
-        const newUser = clearRes(user.toObject());
-        res.status(201).json({ user: newUser });
-      })
-      .catch((error) => {
-        if (error instanceof mongoose.Error.ValidationError) {
-          return res.status(400).json({ errorMessage: error.message });
-        }
-        if (error.code === 11000) {
-          return res.status(400).json({
-            errorMessage:
-              "Username need to be unique. The username you chose is already in use.",
-          });
-        }
-        return res.status(500).json({ errorMessage: error.message });
+    res.cookie("signature", signature, {
+      httpOnly: true,
+      sameSite: true,
+      secure: false,
+    });
+
+    const newUser = clearRes(user.toObject());
+    res.status(201).json({ user: newUser });
+  } catch (error) {
+    if (error instanceof mongoose.Error.ValidationError) {
+      return res.status(400).json({ errorMessage: error.message });
+    }
+    if (error.code === 11000) {
+      return res.status(400).json({
+        errorMessage:
+          "Username need to be unique. The username you chose is already in use.",
       });
-  });
+    }
+    return res.status(500).json({ errorMessage: error.message });
+  }
 };
+
+// Login Process
 
 exports.loginProcess = async (req, res, next) => {
   try {
@@ -104,9 +101,7 @@ exports.loginProcess = async (req, res, next) => {
       const newUser = clearRes(user.toObject());
       res.status(200).json({ user: newUser });
     } else {
-      res
-        .status(400)
-        .json({ errorMessage: "Your credentials are wrong" });
+      res.status(400).json({ errorMessage: "Your credentials are wrong" });
     }
   } catch (error) {
     if (error instanceof mongoose.Error.ValidationError) {
@@ -114,23 +109,27 @@ exports.loginProcess = async (req, res, next) => {
     }
     if (error.code === 11000) {
       return res.status(400).json({
-        errorMessage: "Username need to be unique. The username you chose is already in use.",
+        errorMessage:
+          "Username need to be unique. The username you chose is already in use.",
       });
     }
     return res.status(500).json({ errorMessage: error.message });
   }
 };
 
+// Logout Process
+
 exports.logoutProcess = async (req, res, next) => {
-    try {
-        res.clearCookie("headload");
-        res.clearCookie("signature");
-        res.status(200).json({ message: "You have been logged out" });
-    } catch (error) {
-        return res.status(500).json({ errorMessage: error.message });
-    }
+  try {
+    res.clearCookie("headload");
+    res.clearCookie("signature");
+    res.status(200).json({ message: "You have been logged out" });
+  } catch (error) {
+    return res.status(500).json({ errorMessage: error.message });
+  }
 };
 
+// Get User Logged
 
 exports.getUserLogged = async (req, res, next) => {
   try {

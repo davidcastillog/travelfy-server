@@ -6,7 +6,7 @@ const User = require("../models/User.model");
 exports.verifyToken = (req, res, next) => {
   const { headload, signature } = req.cookies;
   if (!headload || !signature)
-    return res.status(401).json({ errorMessage: "No token found" });
+    return res.status(401).json({ errorMessage: "Token not found. Please login or sign Up" });
 
   jwt.verify(`${headload}.${signature}`, process.env.SECRET, (err, decoded) => {
     if (err) {

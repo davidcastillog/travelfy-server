@@ -13,6 +13,7 @@ router.post("/login", loginProcess);
 
 router.post("/logout", logoutProcess);
 
+// Route to get the user logged in
 router.get("/getuser", verifyToken, getUserLogged);
 
 module.exports = router;
