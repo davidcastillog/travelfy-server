@@ -7,6 +7,7 @@ const userSchema = new Schema(
       unique: true,
       minlength: [4, "Username must be at least 4 characters long"],
       maxlength: [20, "Username must be at most 20 characters long"],
+      match: [/^[a-zA-Z0-9]+$/, "Username can only contain letters and numbers"],
       default: () => Math.random().toString(36).substring(4, 10),
     },
     email: {
@@ -19,6 +20,7 @@ const userSchema = new Schema(
             email
           );
         },
+        erroMessage: "Email is not valid",
       },
     },
     password: {
@@ -40,6 +42,10 @@ const userSchema = new Schema(
       type: String,
       default:
         "https://res.cloudinary.com/davidcastillog/image/upload/v1646252517/travelfy/suitecasedefault_zdvu6r.png",
+    },
+    googleId: {
+      type: String,
+      unique: true,
     },
     _places: [
       {

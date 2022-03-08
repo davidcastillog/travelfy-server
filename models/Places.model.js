@@ -23,18 +23,13 @@ const placesSchema = new Schema(
       min: 0,
       max: 5,
     },
-    // !! Review if this is the best way to do this
-    location: {
-      type: {
-        type: String,
-        enum: ["Point"],
-        // required: true,
-      },
-      coordinates: {
-        type: [Number],
-        index: "2dsphere",
-        // required: true,
-      },
+    lat: {
+      type: Number,
+      required: true,
+    },
+    long: {
+      type: Number,
+      required: true,
     },
     _user: {
       type: Schema.Types.ObjectId,
@@ -43,6 +38,7 @@ const placesSchema = new Schema(
     _trip: {
       type: Schema.Types.ObjectId,
       ref: "Trip",
+      required: [true, "Trip is required"],
     },
   },
   {

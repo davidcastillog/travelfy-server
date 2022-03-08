@@ -19,7 +19,7 @@ exports.createTripProcess = async (req, res, next) => {
 };
 
 // Get all trips from the user logged in
-exports.allTripsProcess = async (req, res, next) => {
+exports.getAllTripsProcess = async (req, res, next) => {
   try {
     const { _id: _user } = req.user;
     const trips = await Trips.find({ _user });
@@ -34,7 +34,7 @@ exports.allTripsProcess = async (req, res, next) => {
 };
 
 // Get one trip from the user logged in
-exports.oneTripProcess = async (req, res, next) => {
+exports.getOneTripProcess = async (req, res, next) => {
   try {
     const { _id: _user } = req.user;
     const { id } = req.params;
@@ -77,9 +77,13 @@ exports.deleteTripProcess = async (req, res, next) => {
     if (places) {
       places.forEach(async (place) => {
         await Places.findByIdAndDelete(place._id);
+        const user = await User.findByIdAndUpdate(_user, {
+          $pull: { _places: place._id },
+        });
+        user.save();
       });
     } else {
-      res.status(404).json({errorMessage: "Places not found" })
+      res.status(404).json({ errorMessage: "Places not found" });
     }
     if (trip) {
       res.status(200).json({ tripDeleted: trip });

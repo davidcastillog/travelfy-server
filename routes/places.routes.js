@@ -1,8 +1,8 @@
 const router = require("express").Router();
 const {
   createPlaceProcess,
-  allPlacesProcess,
-  onePlaceProcess,
+  getAllPlacesProcess,
+  getOnePlaceProcess,
   updatePlaceProcess,
   deletePlaceProcess,
 } = require("../controllers/places.controller");
@@ -12,10 +12,10 @@ const { verifyToken } = require("../middleware/jwt.middleware");
 router.post("/create", verifyToken, createPlaceProcess);
 
 // List all places
-router.get("/", verifyToken, allPlacesProcess);
+router.get("/", verifyToken, getAllPlacesProcess);
 
 // Get one place
-router.get("/:id", verifyToken, onePlaceProcess);
+router.get("/:id", verifyToken, getOnePlaceProcess);
 
 // Update one place
 router.patch("/update/:id", verifyToken, updatePlaceProcess);

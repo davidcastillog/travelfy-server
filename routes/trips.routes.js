@@ -1,8 +1,9 @@
 const router = require("express").Router();
 const {
   createTripProcess,
-  allTripsProcess,
-  oneTripProcess,
+  getAllTripsProcess,
+  getOneTripProcess,
+  updateTripProcess,
   deleteTripProcess,
 } = require("../controllers/trips.controller");
 const { verifyToken } = require("../middleware/jwt.middleware");
@@ -11,13 +12,13 @@ const { verifyToken } = require("../middleware/jwt.middleware");
 router.post("/create", verifyToken, createTripProcess);
 
 // List all trips
-router.get("/", verifyToken, allTripsProcess);
+router.get("/", verifyToken, getAllTripsProcess);
 
 // Get one trip
-router.get("/:id", verifyToken, oneTripProcess);
+router.get("/:id", verifyToken, getOneTripProcess);
 
 // Update one trip
-router.patch("/update/:id", verifyToken, oneTripProcess);
+router.patch("/update/:id", verifyToken, updateTripProcess);
 
 // Delete one trip
 router.delete("/delete/:id", verifyToken, deleteTripProcess);

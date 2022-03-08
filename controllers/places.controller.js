@@ -23,7 +23,7 @@ exports.createPlaceProcess = async (req, res, next) => {
 };
 
 // Get all places from the user logged in
-exports.allPlacesProcess = async (req, res, next) => {
+exports.getAllPlacesProcess = async (req, res, next) => {
   try {
     const { _id: _user } = req.user;
     const places = await Places.find({ _user });
@@ -38,7 +38,7 @@ exports.allPlacesProcess = async (req, res, next) => {
 };
 
 // Get one place from the user logged in
-exports.onePlaceProcess = async (req, res, next) => {
+exports.getOnePlaceProcess = async (req, res, next) => {
   try {
     const { _id: _user } = req.user;
     const { id } = req.params;

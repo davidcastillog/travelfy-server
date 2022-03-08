@@ -3,6 +3,8 @@ const bcrypt = require("bcrypt");
 const mongoose = require("mongoose");
 const saltRounds = 10;
 const { createJWT, clearRes } = require("../utils/jwt");
+const { OAuth2Client } = require("google-auth-library");
+const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 // Signup process
 
@@ -139,5 +141,64 @@ exports.getUserLogged = async (req, res, next) => {
     res.status(200).json({ user: newUser });
   } catch (error) {
     res.status(400).json({ erroMessage: error });
+  }
+};
+
+// Google Login Signup Process
+exports.googleProcess = async (req, res, next) => {
+  try {
+    const { tokenId } = req.body;
+    const response = await client.verifyIdToken({
+      idToken: tokenId,
+      audience: process.env.GOOGLE_CLIENT_ID,
+    });
+    const { email_verified, email, sub } = response.payload;
+    if (!email_verified) {
+      return res.status(400).json({ errorMessage: "Email not verified" });
+    }
+    const user = await User.findOne({ email });
+    if (user) {
+      const [header, payload, signature] = createJWT(user);
+
+      res.cookie("headload", `${header}.${payload}`, {
+        maxAge: 1000 * 60 * 60 * 24,
+        httpOnly: true,
+        sameSite: true,
+        secure: false,
+      });
+
+      res.cookie("signature", signature, {
+        httpOnly: true,
+        sameSite: true,
+        secure: false,
+      });
+      const userLogged = clearRes(user.toObject());
+      res.status(200).json({ user: userLogged });
+    } else {
+      const hashedPassword = await bcrypt.hash(email, saltRounds);
+      const newUser = await User.create({
+        email,
+        password: hashedPassword,
+        googleId: sub,
+      });
+      const [header, payload, signature] = createJWT(newUser);
+
+      res.cookie("headload", `${header}.${payload}`, {
+        maxAge: 1000 * 60 * 60 * 24,
+        httpOnly: true,
+        sameSite: true,
+        secure: false,
+      });
+
+      res.cookie("signature", signature, {
+        httpOnly: true,
+        sameSite: true,
+        secure: false,
+      });
+      const userCreated = clearRes(newUser.toObject());
+      res.status(201).json({ user: userCreated });
+    }
+  } catch (error) {
+    return res.status(500).json({ errorMessage: error.message });
   }
 };
