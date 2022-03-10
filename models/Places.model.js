@@ -18,7 +18,7 @@ const placesSchema = new Schema(
         type: String,
       },
     ],
-    rating: {
+    userRating: {
       type: Number,
       min: 0,
       max: 5,
@@ -27,7 +27,7 @@ const placesSchema = new Schema(
       type: Number,
       required: true,
     },
-    long: {
+    lng: {
       type: Number,
       required: true,
     },
