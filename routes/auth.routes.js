@@ -5,6 +5,7 @@ const {
   logoutProcess,
   getUserLogged,
   googleProcess,
+  changePasswordProcess,
 } = require("../controllers/auth.controller");
 const { verifyToken } = require("../middleware/jwt.middleware");
 
@@ -14,8 +15,10 @@ router.post("/login", loginProcess);
 
 router.post("/logout", logoutProcess);
 
+router.post("/changepassword", changePasswordProcess);
+
 router.get("/getuser", verifyToken, getUserLogged);
 
-router.post('/google', googleProcess);
+router.post("/google", googleProcess);
 
 module.exports = router;

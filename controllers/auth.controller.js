@@ -119,6 +119,67 @@ exports.loginProcess = async (req, res, next) => {
   }
 };
 
+// Change password process
+exports.changePasswordProcess = async (req, res, next) => {
+  const { oldPassword, newPassword, confirmPassword } = req.body;
+
+  if (newPassword.length < 6) {
+    return res.status(400).json({
+      errorMessage: "Password must be at least 6 characters long",
+    });
+  }
+
+  if (newPassword != confirmPassword) {
+    return res
+      .status(400)
+      .json({ errorMessage: "Your passwords doesn't match" });
+  }
+
+  try {
+    const { _id } = req.user;
+    console.log(req.data);
+    const user = await User.findById(_id);
+    const match = await bcrypt.compareSync(oldPassword, user.password);
+
+    if (!match) {
+      return res.status(400).json({ errorMessage: "Your credentials are wrong" });
+    }
+    const hashedPassword = await bcrypt.hash(newPassword, saltRounds);
+    await User.findByIdAndUpdate(_id, { password: hashedPassword });
+    res.status(200).json({ message: "Your password has been changed" });
+    // Update JWT cookie
+    const [header, payload, signature] = createJWT(user);
+
+    res.cookie("headload", `${header}.${payload}`, {
+      maxAge: 1000 * 60 * 60 * 24,
+      httpOnly: true,
+      sameSite: true,
+      secure: false,
+    });
+
+    res.cookie("signature", signature, {
+      httpOnly: true,
+      sameSite: true,
+      secure: false,
+    });
+
+    const newUser = clearRes(user.toObject());
+    res.status(200).json({ user: newUser });
+
+  } catch (error) {
+    if (error instanceof mongoose.Error.ValidationError) {
+      return res.status(400).json({ errorMessage: error.message });
+    }
+    if (error.code === 11000) {
+      return res.status(400).json({
+        errorMessage:
+          "Username need to be unique. The username you chose is already in use.",
+      });
+    }
+    return res.status(500).json({ errorMessage: error.message });
+  }
+};
+
 // Logout Process
 
 exports.logoutProcess = async (req, res, next) => {

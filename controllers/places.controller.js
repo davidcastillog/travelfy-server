@@ -7,6 +7,12 @@ exports.createPlaceProcess = async (req, res, next) => {
   try {
     const { _id: _user } = req.user;
     const place = { ...req.body };
+    const findTrip = await Trips.findById(place._trip);
+    if (!findTrip) {
+      return res.status(404).json({
+        message: "Trip not found. You must create a trip first",
+      });
+    }
     const newPlace = await Places.create({ ...place, _user });
     const trip = await Trips.findByIdAndUpdate(newPlace._trip, {
       $push: { _places: newPlace._id },

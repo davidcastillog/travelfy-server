@@ -8,17 +8,17 @@ const placesSchema = new Schema(
       minlength: [2, "Name must be at least 2 characters"],
       maxlength: [20, "Name must be at most 20 characters"],
     },
-    description: {
+    address: {
       type: String,
       minlength: [2, "Description must be at least 2 characters"],
-      maxlength: [30, "Description must be at most 30 characters"],
+      maxlength: [50, "Description must be at most 30 characters"],
     },
     placeImages: [
       {
         type: String,
       },
     ],
-    userRating: {
+    rating: {
       type: Number,
       min: 0,
       max: 5,
