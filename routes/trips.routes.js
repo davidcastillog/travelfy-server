@@ -3,6 +3,7 @@ const {
   createTripProcess,
   getAllTripsProcess,
   getOneTripProcess,
+  getAllPlacesFromTripProcess,
   updateTripProcess,
   deleteTripProcess,
 } = require("../controllers/trips.controller");
@@ -16,6 +17,9 @@ router.get("/", verifyToken, getAllTripsProcess);
 
 // Get one trip
 router.get("/:id", verifyToken, getOneTripProcess);
+
+// Get all places from one trip
+router.get("/:id/places", verifyToken, getAllPlacesFromTripProcess);
 
 // Update one trip
 router.patch("/update/:id", verifyToken, updateTripProcess);

@@ -137,7 +137,6 @@ exports.changePasswordProcess = async (req, res, next) => {
 
   try {
     const { _id } = req.user;
-    console.log(req.data);
     const user = await User.findById(_id);
     const match = await bcrypt.compareSync(oldPassword, user.password);
 

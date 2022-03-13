@@ -6,12 +6,12 @@ const placesSchema = new Schema(
       type: String,
       required: [true, "Name is required"],
       minlength: [2, "Name must be at least 2 characters"],
-      maxlength: [20, "Name must be at most 20 characters"],
+      maxlength: [50, "Name must be at most 50 characters"],
     },
     address: {
       type: String,
       minlength: [2, "Description must be at least 2 characters"],
-      maxlength: [50, "Description must be at most 30 characters"],
+      maxlength: [50, "Description must be at most 50 characters"],
     },
     placeImages: [
       {
@@ -30,6 +30,13 @@ const placesSchema = new Schema(
     lng: {
       type: Number,
       required: true,
+    },
+    apiLocationId: {
+      type: Number,
+      required: true,
+    },
+    website: {
+      type: String,
     },
     _user: {
       type: Schema.Types.ObjectId,

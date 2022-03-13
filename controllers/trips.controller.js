@@ -49,6 +49,22 @@ exports.getOneTripProcess = async (req, res, next) => {
   }
 };
 
+// Get all places from one trip
+exports.getAllPlacesFromTripProcess = async (req, res, next) => {
+  try {
+    const { _id: _user } = req.user;
+    const { id } = req.params;
+    const places = await Places.find({ _trip: id, _user });
+    if (places) {
+      res.status(200).json({ places });
+    } else {
+      res.status(404).json({ errorMessage: "No places found" });
+    }
+  } catch (error) {
+    res.status(400).json({ errorMessage: error });
+  }
+};
+
 // Update one trip from the user logged in
 exports.updateTripProcess = async (req, res, next) => {
   try {

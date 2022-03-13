@@ -10,7 +10,15 @@ exports.createPlaceProcess = async (req, res, next) => {
     const findTrip = await Trips.findById(place._trip);
     if (!findTrip) {
       return res.status(404).json({
-        message: "Trip not found. You must create a trip first",
+        errorMessage: "You must create a trip first",
+      });
+    }
+    const findPlace = await Places.findOne({
+      apiLocationId: place.apiLocationId,
+    });
+    if (findPlace) {
+      return res.status(400).json({
+        errorMessage: "You already have this place saved",
       });
     }
     const newPlace = await Places.create({ ...place, _user });
