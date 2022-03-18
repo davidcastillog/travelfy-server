@@ -11,12 +11,13 @@ const tripsSchema = new Schema(
     description: {
       type: String,
       minlength: [2, "Description must be at least 2 characters"],
-      maxlength: [20, "Description must be at most 20 characters"],
+      maxlength: [30, "Description must be at most 30 characters"],
+      default: "It's time to get away!",
     },
     tripImage: {
       type: String,
       default:
-        "https://res.cloudinary.com/davidcastillog/image/upload/v1646252517/travelfy/suitecasedefault_zdvu6r.png",
+        "https://res.cloudinary.com/davidcastillog/image/upload/v1647290056/travelfy/default-trip_fym57f.jpg",
     },
     _user: {
       type: Schema.Types.ObjectId,

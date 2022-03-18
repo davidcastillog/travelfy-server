@@ -179,6 +179,56 @@ exports.changePasswordProcess = async (req, res, next) => {
   }
 };
 
+
+// Edit profile if is the user's profile and is logged in.
+exports.updateUserProcess = async (req, res, next) => {
+  const { email, username, ...rest } = req.body;
+  const user = await User.findById(req.user._id);
+  if (!user) {
+    return res.status(400).json({ errorMessage: "User not found" });
+  }
+  if (user.email !== email) {
+    const found = await User.findOne({ email });
+    if (found) {
+      return res
+        .status(400)
+        .json({ errorMessage: "Your email is already in use" });
+    }
+  }
+  if (user.username !== username) {
+    const found = await User.findOne({ username });
+    if (found) {
+      return res
+        .status(400)
+        .json({ errorMessage: "Your username is already in use" });
+    }
+  }
+  try {
+    const updatedUser = await User.findByIdAndUpdate(
+      user._id,
+      {
+        email,
+        username,
+        ...rest,
+      },
+      { new: true }
+    );
+    const newUser = clearRes(updatedUser.toObject());
+    res.status(200).json({ user: newUser });
+  } catch (error) {
+    if (error instanceof mongoose.Error.ValidationError) {
+      return res.status(400).json({ errorMessage: error.message });
+    }
+    if (error.code === 11000) {
+      return res.status(400).json({
+        errorMessage:
+          "Username need to be unique. The username you chose is already in use.",
+      });
+    }
+    return res.status(500).json({ errorMessage: error.message });
+  }
+};
+
 // Logout Process
 
 exports.logoutProcess = async (req, res, next) => {

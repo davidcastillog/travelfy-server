@@ -13,11 +13,9 @@ const placesSchema = new Schema(
       minlength: [2, "Description must be at least 2 characters"],
       maxlength: [50, "Description must be at most 50 characters"],
     },
-    placeImages: [
-      {
+    placeImages: {
         type: String,
-      },
-    ],
+    },
     rating: {
       type: Number,
       min: 0,
@@ -34,6 +32,12 @@ const placesSchema = new Schema(
     apiLocationId: {
       type: Number,
       required: true,
+    },
+    num_reviews: {
+      type: Number,
+    },
+    ranking: {
+      type: String,
     },
     website: {
       type: String,

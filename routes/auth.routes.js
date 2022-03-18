@@ -6,6 +6,7 @@ const {
   getUserLogged,
   googleProcess,
   changePasswordProcess,
+  updateUserProcess,
 } = require("../controllers/auth.controller");
 const { verifyToken } = require("../middleware/jwt.middleware");
 
@@ -15,7 +16,9 @@ router.post("/login", loginProcess);
 
 router.post("/logout", logoutProcess);
 
-router.post("/changepassword", changePasswordProcess);
+router.post("/changepassword", verifyToken, changePasswordProcess);
+
+router.post("/update",verifyToken, updateUserProcess);
 
 router.get("/getuser", verifyToken, getUserLogged);
 
