@@ -10,8 +10,6 @@ const placesSchema = new Schema(
     },
     address: {
       type: String,
-      minlength: [2, "Description must be at least 2 characters"],
-      maxlength: [50, "Description must be at most 50 characters"],
     },
     placeImages: {
         type: String,

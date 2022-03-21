@@ -49,12 +49,27 @@ exports.getOneTripProcess = async (req, res, next) => {
   }
 };
 
-// Get all places from one trip
+// Get all places from one of the user's trip
 exports.getAllPlacesFromTripProcess = async (req, res, next) => {
   try {
     const { _id: _user } = req.user;
     const { id } = req.params;
     const places = await Places.find({ _trip: id, _user });
+    if (places) {
+      res.status(200).json({ places });
+    } else {
+      res.status(404).json({ errorMessage: "No places found" });
+    }
+  } catch (error) {
+    res.status(400).json({ errorMessage: error });
+  }
+};
+
+// Get all places from a trip to share with other users
+exports.getAllPlacesToShareProcess = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const places = await Places.find({ _trip: id });
     if (places) {
       res.status(200).json({ places });
     } else {

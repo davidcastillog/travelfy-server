@@ -41,7 +41,7 @@ const userSchema = new Schema(
     profilePic: {
       type: String,
       default:
-        "https://res.cloudinary.com/davidcastillog/image/upload/v1646252517/travelfy/suitecasedefault_zdvu6r.png",
+        "https://bit.ly/3tlE1bC",
     },
     googleId: {
       type: String,

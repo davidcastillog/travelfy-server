@@ -14,6 +14,8 @@ exports.createPlaceProcess = async (req, res, next) => {
       });
     }
     const findPlace = await Places.findOne({
+      _user,
+      _trip: place._trip,
       apiLocationId: place.apiLocationId,
     });
     if (findPlace) {

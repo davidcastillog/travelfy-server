@@ -6,6 +6,7 @@ const {
   getAllPlacesFromTripProcess,
   updateTripProcess,
   deleteTripProcess,
+  getAllPlacesToShareProcess,
 } = require("../controllers/trips.controller");
 const { verifyToken } = require("../middleware/jwt.middleware");
 
@@ -20,6 +21,9 @@ router.get("/:id", verifyToken, getOneTripProcess);
 
 // Get all places from one trip
 router.get("/:id/places", verifyToken, getAllPlacesFromTripProcess);
+
+// Get all places from one trip to share
+router.get("/share/:id/places", getAllPlacesToShareProcess);
 
 // Update one trip
 router.patch("/update/:id", verifyToken, updateTripProcess);

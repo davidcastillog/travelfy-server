@@ -141,7 +141,9 @@ exports.changePasswordProcess = async (req, res, next) => {
     const match = await bcrypt.compareSync(oldPassword, user.password);
 
     if (!match) {
-      return res.status(400).json({ errorMessage: "Your credentials are wrong" });
+      return res
+        .status(400)
+        .json({ errorMessage: "Your credentials are wrong" });
     }
     const hashedPassword = await bcrypt.hash(newPassword, saltRounds);
     await User.findByIdAndUpdate(_id, { password: hashedPassword });
@@ -164,7 +166,6 @@ exports.changePasswordProcess = async (req, res, next) => {
 
     const newUser = clearRes(user.toObject());
     res.status(200).json({ user: newUser });
-
   } catch (error) {
     if (error instanceof mongoose.Error.ValidationError) {
       return res.status(400).json({ errorMessage: error.message });
@@ -178,7 +179,6 @@ exports.changePasswordProcess = async (req, res, next) => {
     return res.status(500).json({ errorMessage: error.message });
   }
 };
-
 
 // Edit profile if is the user's profile and is logged in.
 exports.updateUserProcess = async (req, res, next) => {
@@ -200,7 +200,7 @@ exports.updateUserProcess = async (req, res, next) => {
     if (found) {
       return res
         .status(400)
-        .json({ errorMessage: "Your username is already in use" });
+        .json({ errorMessage: "The username is already in use" });
     }
   }
   try {
