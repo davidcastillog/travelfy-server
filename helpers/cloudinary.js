@@ -20,7 +20,7 @@ const storage = new CloudinaryStorage({
                 }
                 cb(null, file.originalname)
             },
-            public_id: `app-${file.originalname}`
+            public_id: file.originalname.split('.')[0] + '-' + Date.now() // Random string to prevent duplicate file names
         }
     }
 })
