@@ -47,14 +47,14 @@ exports.signupProcess = async (req, res, next) => {
     res.cookie("headload", `${header}.${payload}`, {
       maxAge: 1000 * 60 * 60 * 24,
       httpOnly: true,
-      sameSite: true,
-      secure: false,
+      sameSite: "none",
+      secure: true,
     });
 
     res.cookie("signature", signature, {
       httpOnly: true,
-      sameSite: true,
-      secure: false,
+      sameSite: "none",
+      secure: true,
     });
 
     const newUser = clearRes(user.toObject());
@@ -91,14 +91,14 @@ exports.loginProcess = async (req, res, next) => {
       res.cookie("headload", `${header}.${payload}`, {
         maxAge: 1000 * 60 * 60 * 24,
         httpOnly: true,
-        sameSite: true,
-        secure: false,
+        sameSite: "none",
+        secure: true,
       });
 
       res.cookie("signature", signature, {
         httpOnly: true,
-        sameSite: true,
-        secure: false,
+        sameSite: "none",
+        secure: true,
       });
       const newUser = clearRes(user.toObject());
       res.status(200).json({ user: newUser });
@@ -154,14 +154,14 @@ exports.changePasswordProcess = async (req, res, next) => {
     res.cookie("headload", `${header}.${payload}`, {
       maxAge: 1000 * 60 * 60 * 24,
       httpOnly: true,
-      sameSite: true,
-      secure: false,
+      sameSite: "none",
+      secure: true,
     });
 
     res.cookie("signature", signature, {
       httpOnly: true,
-      sameSite: true,
-      secure: false,
+      sameSite: "none",
+      secure: true,
     });
 
     const newUser = clearRes(user.toObject());
@@ -233,8 +233,16 @@ exports.updateUserProcess = async (req, res, next) => {
 
 exports.logoutProcess = async (req, res, next) => {
   try {
-    res.clearCookie("headload");
-    res.clearCookie("signature");
+    res.clearCookie("headload", {
+      httpOnly: true,
+      sameSite: "none",
+      secure: true,
+    });
+    res.clearCookie("signature", {
+      httpOnly: true,
+      sameSite: "none",
+      secure: true,
+    });
     res.status(200).json({ message: "You have been logged out" });
   } catch (error) {
     return res.status(500).json({ errorMessage: error.message });
@@ -273,14 +281,14 @@ exports.googleProcess = async (req, res, next) => {
       res.cookie("headload", `${header}.${payload}`, {
         maxAge: 1000 * 60 * 60 * 24,
         httpOnly: true,
-        sameSite: true,
-        secure: false,
+        sameSite: "none",
+        secure: true,
       });
 
       res.cookie("signature", signature, {
         httpOnly: true,
-        sameSite: true,
-        secure: false,
+        sameSite: "none",
+        secure: true,
       });
       const userLogged = clearRes(user.toObject());
       res.status(200).json({ user: userLogged });
@@ -296,14 +304,14 @@ exports.googleProcess = async (req, res, next) => {
       res.cookie("headload", `${header}.${payload}`, {
         maxAge: 1000 * 60 * 60 * 24,
         httpOnly: true,
-        sameSite: true,
-        secure: false,
+        sameSite: "none",
+        secure: true,
       });
 
       res.cookie("signature", signature, {
         httpOnly: true,
-        sameSite: true,
-        secure: false,
+        sameSite: "none",
+        secure: true,
       });
       const userCreated = clearRes(newUser.toObject());
       res.status(201).json({ user: userCreated });
