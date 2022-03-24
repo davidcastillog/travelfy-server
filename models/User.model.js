@@ -43,7 +43,7 @@ const userSchema = new Schema(
     },
     profilePic: {
       type: String,
-      default: "https://bit.ly/3tlE1bC",
+      default: "https://res.cloudinary.com/davidcastillog/image/upload/v1647985995/kdfpzmtdx1kcbpcjb9sh.jpg",
     },
     googleId: {
       type: String,
