@@ -8,7 +8,7 @@ exports.verifyToken = async (req, res, next) => {
     return res.status(401).json({ errorMessage: "Token not found. Please login or sign up" });
 
   try {
-    const decoded = await jwt.verify(`${headload}.${signature}`, process.env.SECRET);
+    const decoded = jwt.verify(`${headload}.${signature}`, process.env.SECRET);
     const user = await User.findById(decoded.userId);
     if (!user) return res.status(401).json({ errorMessage: "User not found" });
     req.user = user;

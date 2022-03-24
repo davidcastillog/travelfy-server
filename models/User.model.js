@@ -7,7 +7,10 @@ const userSchema = new Schema(
       unique: true,
       minlength: [4, "Username must be at least 4 characters long"],
       maxlength: [20, "Username must be at most 20 characters long"],
-      match: [/^[a-zA-Z0-9]+$/, "Username can only contain letters and numbers"],
+      match: [
+        /^[a-zA-Z0-9]+$/,
+        "Username can only contain letters and numbers",
+      ],
       default: () => Math.random().toString(36).substring(4, 10),
     },
     email: {
@@ -26,7 +29,7 @@ const userSchema = new Schema(
     password: {
       type: String,
       required: [true, "Password is required"],
-      minlength: [6, "Password must be at least 6 characters long"]
+      minlength: [6, "Password must be at least 6 characters long"],
     },
     firstName: {
       type: String,
@@ -40,8 +43,7 @@ const userSchema = new Schema(
     },
     profilePic: {
       type: String,
-      default:
-        "https://bit.ly/3tlE1bC",
+      default: "https://res.cloudinary.com/davidcastillog/image/upload/v1647985995/kdfpzmtdx1kcbpcjb9sh.jpg",
     },
     googleId: {
       type: String,

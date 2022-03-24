@@ -4,7 +4,6 @@ const {
   loginProcess,
   logoutProcess,
   getUserLogged,
-  googleProcess,
   changePasswordProcess,
   updateUserProcess,
 } = require("../controllers/auth.controller");
@@ -21,7 +20,5 @@ router.post("/changepassword", verifyToken, changePasswordProcess);
 router.post("/update",verifyToken, updateUserProcess);
 
 router.get("/getuser", verifyToken, getUserLogged);
-
-router.post("/google", googleProcess);
 
 module.exports = router;
